@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://d1w8rldworld"]
+
+[ext_resource type="Script" uid="uid://dbavqaqojqcel" path="res://scripts/world/world.gd" id="1_world"]
+[ext_resource type="PackedScene" uid="uid://2lyqb0a338lk" path="res://scenes/world/region.tscn" id="2_region"]
+[ext_resource type="PackedScene" uid="uid://dbgu1t1medbg" path="res://scenes/ui/time_debug_ui.tscn" id="3_timedebug"]
+
+[node name="World" type="Node2D" unique_id=1391984599]
+script = ExtResource("1_world")
+
+[node name="Region" parent="." unique_id=2034379634 instance=ExtResource("2_region")]
+
+[node name="TimeDebugUI" parent="." unique_id=724089232 instance=ExtResource("3_timedebug")]

@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://dlgmgrsc01"]
+
+[ext_resource type="Script" path="res://scripts/ui/dialogue_manager.gd" id="1_dlgmgr"]
+
+[node name="DialogueManager" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+script = ExtResource("1_dlgmgr")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -95.0
+offset_right = 240.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="LabelSpeaker" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.62, 0.24, 1)
+theme_override_font_sizes/font_size = 13
+text = "Konuşmacı İsmi"
+
+[node name="LabelText" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Diyalog metni buraya gelir..."
+autowrap_mode = 2
+
+[node name="LabelHint" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.65, 0.72, 1)
+theme_override_font_sizes/font_size = 9
+text = "[E] Kapat / Devam Et"
+horizontal_alignment = 2

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://kemalnpcsc01"]
+
+[ext_resource type="PackedScene" path="res://scenes/npc/base_npc.tscn" id="1_basenpc"]
+[ext_resource type="Script" path="res://scripts/npc/npc_kemal.gd" id="2_kemal"]
+
+[node name="FarmerKemal" instance=ExtResource("1_basenpc")]
+script = ExtResource("2_kemal")

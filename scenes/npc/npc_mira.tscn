@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://m1ranpcsc01"]
+
+[ext_resource type="PackedScene" path="res://scenes/npc/base_npc.tscn" id="1_basenpc"]
+[ext_resource type="Script" path="res://scripts/npc/npc_mira.gd" id="2_mira"]
+
+[node name="InnkeeperMira" instance=ExtResource("1_basenpc")]
+script = ExtResource("2_mira")

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bldngpropscene1"]
+
+[ext_resource type="Script" path="res://scripts/world/props/building.gd" id="1_building"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(96, 26)
+
+[node name="Building" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_building")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 6)
+shape = SubResource("RectangleShape2D_wall")

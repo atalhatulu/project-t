@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://lntrnprpsc01"]
+
+[ext_resource type="Script" path="res://scripts/world/props/smart_lantern.gd" id="1_lantern"]
+
+[node name="SmartLantern" type="PointLight2D"]
+color = Color(1, 0.729412, 0.4, 1)
+energy = 1.0
+script = ExtResource("1_lantern")

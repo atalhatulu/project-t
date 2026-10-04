@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://basenpcsc01"]
+
+[ext_resource type="Script" path="res://scripts/npc/base_npc.gd" id="1_basenpc"]
+[ext_resource type="Script" path="res://scripts/npc/npc_visual.gd" id="2_npcvis"]
+[ext_resource type="Script" path="res://scripts/npc/npc_needs.gd" id="3_needs"]
+[ext_resource type="Script" path="res://scripts/npc/npc_memory.gd" id="4_memory"]
+[ext_resource type="Script" path="res://scripts/npc/npc_social.gd" id="5_social"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_npcbody"]
+radius = 5.0
+height = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
+radius = 28.0
+
+[node name="BaseNPC" type="CharacterBody2D"]
+y_sort_enabled = true
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_basenpc")
+
+[node name="Needs" type="Node" parent="."]
+script = ExtResource("3_needs")
+
+[node name="Memory" type="Node" parent="."]
+script = ExtResource("4_memory")
+
+[node name="Social" type="Node" parent="."]
+script = ExtResource("5_social")
+
+[node name="Visual" type="Node2D" parent="."]
+script = ExtResource("2_npcvis")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 10)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_npcbody")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 6.0
+target_desired_distance = 12.0
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_interact")

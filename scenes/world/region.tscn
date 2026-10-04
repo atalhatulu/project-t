@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://rgn7estscene01"]
+
+[ext_resource type="Script" path="res://scripts/world/region.gd" id="1_region"]
+[ext_resource type="PackedScene" path="res://scenes/world/test_location.tscn" id="2_location"]
+
+[node name="Region" type="Node2D"]
+script = ExtResource("1_region")
+
+[node name="TestLocation" parent="." instance=ExtResource("2_location")]

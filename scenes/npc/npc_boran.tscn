@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://borannpcsc01"]
+
+[ext_resource type="PackedScene" path="res://scenes/npc/base_npc.tscn" id="1_basenpc"]
+[ext_resource type="Script" path="res://scripts/npc/npc_boran.gd" id="2_boranscript"]
+
+[node name="BlacksmithBoran" instance=ExtResource("1_basenpc")]
+script = ExtResource("2_boranscript")
