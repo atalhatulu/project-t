@@ -74,10 +74,48 @@ func get_current_dialogue() -> String:
 		return "Bacaklarım tutmuyor, azıcık soluklanayım da ocağa öyle döneyim."
 
 	var has_met = memory.has_met_player() if memory else false
-
-	# Hafızayı güncelle
 	if memory:
 		memory.on_talked_with_player()
+
+	# İtibara göre tepkiler
+	if is_inside_tree():
+		var fm = get_node_or_null("/root/FactionManager")
+		if fm:
+			var rel = fm.get_relation_level("villagers")
+			if rel == FactionManager.RelationLevel.HOSTILE:
+				return "Defol ocağımdan! Köyde yaptıklarını duyduk, sana tek bir çivi dahi satmam!"
+			elif rel == FactionManager.RelationLevel.SUSPICIOUS:
+				return "Gözüm üzerinde yolcu... Çekiç elimde tetikte bekliyorum, uslu dur."
+
+	# 1. Vadinin Sessizliği Görev Sonucu Tepkisi (En yüksek öncelik)
+	var qm = get_node_or_null("/root/QuestManager")
+	if qm:
+		var q_valley = qm.get_quest("silence_of_the_valley")
+		if q_valley:
+			if q_valley.is_completed():
+				if qm.valley_quest_choice == "guards":
+					return "Muhafızlar haydutların inini basıp silahlarını müsadere etmiş! Getirdikleri kırık kılıçları ocağımda eritiyorum, köye huzur getirdin."
+				elif qm.valley_quest_choice == "bandits":
+					return "Demir cevheri sevkiyatı kesildi... Dağ yolundaki haydutlar iyice palazlandı diyorlar. Garip şeyler dönüyor vadide."
+			elif q_valley.is_available():
+				qm.start_quest("silence_of_the_valley")
+				return "Kervan yolu günlerdir sessiz. Ne cevher geliyor ne çelik... Dağ yolunun aşağısında kırık bir araba enkazı görmüş avcılar."
+
+	# Eğer ocaktaysa veya çalışma saatindeyse dükkânı aç
+	if current_state == State.WORK:
+		var player = get_tree().get_first_node_in_group("player") if is_inside_tree() else null
+		if player and player.has_method("open_shop_for"):
+			player.open_shop_for("boran")
+			return "Ocağın ateşi harlıdır! Kılıç, balta, odun ve işlenmemiş demir cevheri bulunur. Ne lazım?"
+
+		var q_caravan = qm.get_quest("caravan_defense")
+		if q_caravan:
+			if q_caravan.stage == QuestData.QuestStage.COMPLETED:
+				return "Kervanı kurtardığını duydum! Dağ yolu yeniden nefes aldı, bileğine kuvvet yolcu."
+			elif q_caravan.stage == QuestData.QuestStage.FAILED:
+				return "Yazık oldu kervana... Haydutlar ortalığı darmadağın etmiş, ticaret yolumuz kesildi."
+			elif q_caravan.stage == QuestData.QuestStage.ACTIVE:
+				return "Kuzeydoğu patikasından feryatlar yükseliyor! Haydutlar kervana pusu kurmuş olmalı, acele etsen iyi olur!"
 
 	if current_schedule_entry.has("dialogue_first"):
 		if not has_met:

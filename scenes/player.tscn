@@ -1,7 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://c3m7x5o0player"]
+[gd_scene load_steps=8 format=3 uid="uid://c3m7x5o0player"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/player_visual.gd" id="2_player_visual"]
+[ext_resource type="Script" path="res://scripts/effects/step_particles.gd" id="3_particles"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory.gd" id="4_inventory"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="5_invui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/journal_ui.tscn" id="6_journalui"]
+[ext_resource type="PackedScene" path="res://scenes/economy/shop_ui.tscn" id="7_shopui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/map_ui.tscn" id="8_mapui"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_body"]
 radius = 5.0
@@ -19,6 +25,9 @@ collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_player")
 
+[node name="StepParticles" type="Node2D" parent="."]
+script = ExtResource("3_particles")
+
 [node name="Visual" type="Node2D" parent="."]
 script = ExtResource("2_player_visual")
 
@@ -29,7 +38,13 @@ shape = SubResource("CapsuleShape2D_body")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
-position_smoothing_speed = 8.0
+position_smoothing_speed = 6.5
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.08
+drag_top_margin = 0.08
+drag_right_margin = 0.08
+drag_bottom_margin = 0.08
 
 [node name="SwordHitbox" type="Area2D" parent="."]
 collision_layer = 8
@@ -47,3 +62,18 @@ collision_mask = 32
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionDetector"]
 position = Vector2(0, 6)
 shape = SubResource("CircleShape2D_interact")
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("4_inventory")
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="InventoryUI" parent="UI" instance=ExtResource("5_invui")]
+
+[node name="JournalUI" parent="UI" instance=ExtResource("6_journalui")]
+
+[node name="ShopUI" parent="UI" instance=ExtResource("7_shopui")]
+[node name="MapUI" parent="UI" instance=ExtResource("8_mapui")]
+
+

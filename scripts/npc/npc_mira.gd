@@ -78,6 +78,28 @@ func get_current_dialogue() -> String:
 	var has_met = memory.has_met_player() if memory else false
 	if memory: memory.on_talked_with_player()
 
+	# Eğer tezgâhtaysa veya çalışma saatindeyse dükkânı aç
+	if current_state == State.WORK:
+		var player = get_tree().get_first_node_in_group("player") if is_inside_tree() else null
+		if player and player.has_method("open_shop_for"):
+			player.open_shop_for("mira")
+			return "Hoş geldin! Taze pişmiş han ekmeği, nefis yahni ve elmalarımız var. Ne arzu ederdin?"
+
+	# 1. Vadinin Sessizliği Görev Sonucu Tepkisi
+	var qm = get_node_or_null("/root/QuestManager") if is_inside_tree() else null
+	if qm:
+		var q_valley = qm.get_quest("silence_of_the_valley")
+		if q_valley and q_valley.is_completed():
+			if qm.valley_quest_choice == "guards":
+				return "Duyduğuma göre kervanları vuran haydut çetesini açığa çıkarmışsın! Hanımıza tüccarlar yeniden uğramaya başladı, vadi sana minnettar."
+			elif qm.valley_quest_choice == "bandits":
+				return "Kervan yolu hala tekinsiz... Haydutların kimseyle göz göze gelmeden vadide at koşturduğu söyleniyor. Garip bir sessizlik var."
+
+		# Söylenti evresi
+		if q_valley and q_valley.is_available():
+			qm.start_quest("silence_of_the_valley")
+			return "Son günlerde hana gelen kervanlar kesildi yolcu. Doğu dağ yolundaki eski ticaret güzergahında kırılmış arabalar görülmüş. Bir şeyler dönüyor orada."
+
 	# Eğer Kemal'in kayıp alet bilgisini öğrenmişse oyuncuya anlatsın!
 	if memory and memory.has_info("kemal_lost_tool"):
 		var info = memory.get_info("kemal_lost_tool")

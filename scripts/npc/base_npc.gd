@@ -56,20 +56,56 @@ var override_state: State = State.IDLE
 # Sohbet Öncesi Durum Saklama
 var pre_chat_state: State = State.IDLE
 
+@export var faction_id: String = "villagers"
+var npc_hurtbox: Area2D = null
+
 func _ready() -> void:
 	add_to_group("npc")
 	collision_layer = 4 # Layer 3: NPC
 	collision_mask = 1  # Layer 1: World_Solid
+
+	_setup_npc_hurtbox()
 
 	if nav_agent:
 		nav_agent.path_desired_distance = 6.0
 		nav_agent.target_desired_distance = arrival_tolerance
 		nav_agent.avoidance_enabled = false
 
-	var tm = get_node_or_null("/root/TimeManager")
-	if tm:
-		tm.hour_changed.connect(_on_hour_changed)
-		_evaluate_schedule_for_hour(tm.current_hour, true)
+	if is_inside_tree():
+		var tm = get_node_or_null("/root/TimeManager")
+		if tm:
+			if not tm.hour_changed.is_connected(_on_hour_changed):
+				tm.hour_changed.connect(_on_hour_changed)
+			_evaluate_schedule_for_hour(tm.current_hour, true)
+
+func _setup_npc_hurtbox() -> void:
+	npc_hurtbox = get_node_or_null("NPCHurtbox")
+	if not npc_hurtbox:
+		npc_hurtbox = Area2D.new()
+		npc_hurtbox.name = "NPCHurtbox"
+		npc_hurtbox.collision_layer = 16 # Layer 5: Hurtbox
+		npc_hurtbox.collision_mask = 8   # Layer 4: Hitbox
+		var col = CollisionShape2D.new()
+		var shape = CircleShape2D.new()
+		shape.radius = 14.0
+		col.shape = shape
+		npc_hurtbox.add_child(col)
+		add_child(npc_hurtbox)
+	
+	if not npc_hurtbox.area_entered.is_connected(_on_npc_hurtbox_area_entered):
+		npc_hurtbox.area_entered.connect(_on_npc_hurtbox_area_entered)
+
+func _on_npc_hurtbox_area_entered(area: Area2D) -> void:
+	if area.name == "SwordHitbox" or area.collision_layer == 8:
+		var player = area.get_parent() as CharacterBody2D
+		take_damage(10, Vector2.ZERO, player)
+
+func take_damage(_amount: int, _knockback: Vector2 = Vector2.ZERO, attacker: Node = null) -> void:
+	if is_inside_tree():
+		var fm = get_node_or_null("/root/FactionManager")
+		if fm:
+			var player = attacker as CharacterBody2D if attacker is CharacterBody2D else null
+			fm.report_crime("assault", faction_id, global_position, player)
 
 func _physics_process(delta: float) -> void:
 	# 1. İhtiyaçları güncelle (Zaman hızına göre)
@@ -200,13 +236,27 @@ func _process_walk_state(delta: float) -> void:
 			nav_agent.target_position = target_destination
 		return
 
-	if nav_agent.is_navigation_finished() or global_position.distance_to(target_destination) <= arrival_tolerance:
+	if global_position.distance_to(target_destination) <= arrival_tolerance:
 		_on_reached_destination()
 		return
 
 	var next_path_pos = nav_agent.get_next_path_position()
 	var move_dir = (next_path_pos - global_position).normalized()
-	velocity = move_dir * walk_speed
+	if move_dir == Vector2.ZERO:
+		move_dir = (target_destination - global_position).normalized()
+
+	# Hafif yerel kaçınma (Soft Local Avoidance) - Dar kapı ve köprülerde kilitlenmeyi önler
+	var avoidance_force = Vector2.ZERO
+	if is_inside_tree():
+		for other in get_tree().get_nodes_in_group("npc"):
+			if other != self and is_instance_valid(other) and other is BaseNPC:
+				var dist = global_position.distance_to(other.global_position)
+				if dist < 28.0 and dist > 0.1:
+					var push_dir = (global_position - other.global_position).normalized()
+					avoidance_force += push_dir * ((28.0 - dist) / 28.0) * 0.45
+
+	var final_dir = (move_dir + avoidance_force).normalized()
+	velocity = final_dir * walk_speed
 	move_and_slide()
 
 	if move_dir.x != 0.0 and visual_node:
@@ -214,7 +264,7 @@ func _process_walk_state(delta: float) -> void:
 
 	if global_position.distance_to(last_position) < 1.0:
 		stuck_timer += delta
-		if stuck_timer > 2.5:
+		if stuck_timer > 2.0:
 			_handle_stuck_situation()
 			stuck_timer = 0.0
 	else:
@@ -223,8 +273,11 @@ func _process_walk_state(delta: float) -> void:
 
 func _handle_stuck_situation() -> void:
 	if is_player_nearby():
-		stuck_wait_timer = 1.5
-		nav_agent.target_position = target_destination
+		# Oyuncu yakınında asla doğrudan ışınlama yapma!
+		# Kısa süre duraksayıp hedefi hafif rastgele açıyla yeniden rota hesapla
+		stuck_wait_timer = 0.8
+		var jitter = Vector2(randf_range(-16, 16), randf_range(-16, 16))
+		nav_agent.target_position = target_destination + jitter
 	else:
 		global_position = target_destination
 		_on_reached_destination()
@@ -281,6 +334,18 @@ func _evaluate_schedule_for_hour(hour: int, immediate: bool) -> void:
 func get_current_dialogue() -> String:
 	if memory:
 		memory.on_talked_with_player()
+
+	# İtibara göre tepkiler
+	if is_inside_tree():
+		var fm = get_node_or_null("/root/FactionManager")
+		if fm:
+			var rel = fm.get_relation_level(faction_id)
+			if rel == FactionManager.RelationLevel.HOSTILE:
+				return "Uzak dur benden uğursuz! Adını anmak bile köyümüze felaket getiriyor!"
+			elif rel == FactionManager.RelationLevel.SUSPICIOUS:
+				return "Gözüm üzerinde... Buralarda pek tekin karşılanmıyorsun, dikkatli olsan iyi edersin."
+			elif rel == FactionManager.RelationLevel.ALLIED:
+				return "Vadi'nin onurlu dostu! Seni görmek yüreğimize ferahlık veriyor, hoş geldin!"
 
 	if current_schedule_entry.has("dialogue"):
 		return current_schedule_entry["dialogue"]

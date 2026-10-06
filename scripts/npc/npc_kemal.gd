@@ -81,6 +81,45 @@ func _ready() -> void:
 		memory.learn_info("kemal_lost_tool", npc_id, "Kadim orak aletimi tarlanın güneyinde kaybettim.")
 
 func get_current_dialogue() -> String:
+	var qm = get_node_or_null("/root/QuestManager") if is_inside_tree() else null
+	if not qm and get_parent() != null:
+		qm = get_parent().get_node_or_null("QuestManager")
+	var player = get_tree().get_first_node_in_group("player") if is_inside_tree() else null
+	if not player and get_parent() != null:
+		player = get_parent().get_node_or_null("Player")
+	var inv: Inventory = player.get_inventory() if player and player.has_method("get_inventory") else null
+
+	# 1. Vadinin Sessizliği Görev Tepkisi
+	if qm:
+		var q_valley = qm.get_quest("silence_of_the_valley")
+		if q_valley:
+			if q_valley.is_completed():
+				if qm.valley_quest_choice == "guards":
+					return "Muhafızlar dağdaki haydut inini basmış diyorlar. Artık ekinlerimizi şehre götürürken korkmayacağız, ellerin dert görmesin!"
+				elif qm.valley_quest_choice == "bandits":
+					return "Tüccarlar artık vadimizden geçmeye korkuyor. Topladığımız buğday depolarda çürüyecek diye ödüm kopuyor..."
+			elif q_valley.is_available():
+				qm.start_quest("silence_of_the_valley")
+				return "Tarlada çalışırken doğu dağlarından tekerlek gıcırtıları ve haykırışlar duydum evlat. Kervanlar birer birer kayboluyor, yolun kenarında araba enkazları kalmış."
+
+	# 2. Kemal'in Orağı Görevi
+	if qm:
+		var q = qm.get_quest("kemal_lost_sickle")
+		if q:
+			if q.stage == QuestData.QuestStage.ACTIVE and inv and inv.has_item("kemal_sickle", 1):
+				qm.complete_quest("kemal_lost_sickle", inv)
+				if memory:
+					memory.record_event("player_helped_kemal", {"item": "kemal_sickle"})
+				return q.completion_dialogue
+			elif q.stage == QuestData.QuestStage.COMPLETED:
+				return "Yadigâr orağım elimde ya, ekinler artık boynumu bükemez! Sağ olasın yiğit yolcu."
+			elif q.stage == QuestData.QuestStage.AVAILABLE:
+				# İlk kez konuşulduğunda görevi aktif yap
+				qm.start_quest("kemal_lost_sickle")
+				if memory:
+					memory.record_event("asked_for_sickle", {})
+				return "Ah evlat, sorma başıma geleni! Dedemden kalma kadim çelik orağı tarlanın güneyinde, gölet yakınındaki çalılarda düşürdüm. Gözlerim pek seçmiyor, bulup getirirsen duacın olurum!"
+
 	var has_met = memory.has_met_player() if memory else false
 	if memory: memory.on_talked_with_player()
 

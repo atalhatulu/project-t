@@ -15,7 +15,7 @@ var last_talk_hour: int = -1
 var last_talk_day: int = -1
 
 func record_event(event_type: String, details: Dictionary = {}) -> void:
-	var tm = get_node_or_null("/root/TimeManager")
+	var tm = get_node_or_null("/root/TimeManager") if is_inside_tree() else null
 	var cur_day = tm.current_day if tm else 1
 	var cur_hour = tm.current_hour if tm else 8
 
@@ -34,7 +34,7 @@ func learn_info(info_id: String, source_id: String, content: String) -> bool:
 	if known_information.has(info_id):
 		return false # Zaten biliniyor
 
-	var tm = get_node_or_null("/root/TimeManager")
+	var tm = get_node_or_null("/root/TimeManager") if is_inside_tree() else null
 	var cur_hour = tm.current_hour if tm else 8
 
 	known_information[info_id] = {

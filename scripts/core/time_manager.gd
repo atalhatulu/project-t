@@ -89,3 +89,15 @@ func get_time_string() -> String:
 # Zaman hızını ayarla (Örn: 1.0 = normal, 10.0 = 10x hızlı)
 func set_time_scale(scale_val: float) -> void:
 	time_scale = max(0.0, scale_val)
+
+# Zamanı doğrudan belirli bir saat kadar ilerlet (Hızlı seyahat vb. için)
+func advance_time(hours: float) -> void:
+	var added_seconds = hours * 3600.0
+	total_game_seconds += added_seconds
+	if total_game_seconds >= 86400.0:
+		var days_passed = int(total_game_seconds / 86400.0)
+		total_game_seconds = fmod(total_game_seconds, 86400.0)
+		current_day += days_passed
+		day_changed.emit(current_day)
+	_update_time_values(true)
+

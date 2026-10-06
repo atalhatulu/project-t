@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://cratprp01"]
+
+[ext_resource type="Script" path="res://scripts/interactables/breakable_crate.gd" id="1_crate"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_crate"]
+size = Vector2(16, 14)
+
+[node name="BreakableCrate" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_crate")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_crate")

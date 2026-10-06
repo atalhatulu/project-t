@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://tllgrssc01"]
+
+[ext_resource type="Script" path="res://scripts/world/props/tall_grass.gd" id="1_grass"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grass"]
+size = Vector2(16, 12)
+
+[node name="TallGrass" type="Area2D"]
+y_sort_enabled = true
+collision_layer = 0
+collision_mask = 6
+script = ExtResource("1_grass")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_grass")

@@ -23,6 +23,8 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_T:
 			_cycle_speed()
+		elif event.keycode == KEY_F3:
+			visible = not visible
 
 func _process(_delta: float) -> void:
 	var tm = get_node_or_null("/root/TimeManager")

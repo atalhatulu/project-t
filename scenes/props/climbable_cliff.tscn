@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cliff01scene"]
+
+[ext_resource type="Script" path="res://scripts/world/props/climbable_cliff.gd" id="1_cliff"]
+
+[node name="ClimbableCliff" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_cliff")

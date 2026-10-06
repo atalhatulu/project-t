@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://ruinprp01"]
+
+[ext_resource type="Script" path="res://scripts/interactables/ancient_ruin.gd" id="1_ruin"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ruin"]
+radius = 7.0
+height = 24.0
+
+[node name="AncientRuin" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_ruin")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_ruin")

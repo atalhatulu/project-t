@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://cventrsc01"]
+
+[ext_resource type="Script" path="res://scripts/world/props/cave_entrance.gd" id="1_cave"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cavebase"]
+size = Vector2(76, 22)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_caveinteract"]
+radius = 32.0
+
+[node name="CaveEntrance" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_cave")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_cavebase")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, 10)
+shape = SubResource("CircleShape2D_caveinteract")

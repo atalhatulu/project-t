@@ -1,0 +1,165 @@
+[gd_scene load_steps=15 format=3 uid="uid://cave_dungeon_scene"]
+
+[ext_resource type="Script" path="res://scripts/world/dungeon_cave_room.gd" id="1_caveroom"]
+[ext_resource type="PackedScene" path="res://scenes/props/scene_portal.tscn" id="2_portal"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/props/dungeon_door.tscn" id="4_door"]
+[ext_resource type="PackedScene" path="res://scenes/props/smart_lantern.tscn" id="5_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/props/chest.tscn" id="6_chest"]
+[ext_resource type="PackedScene" path="res://scenes/props/world_item.tscn" id="7_worlditem"]
+[ext_resource type="PackedScene" path="res://scenes/props/breakable_crate.tscn" id="8_crate"]
+[ext_resource type="Script" path="res://scripts/interactables/pressure_plate.gd" id="9_plate"]
+[ext_resource type="Script" path="res://scripts/interactables/pushable_rock.gd" id="10_rock"]
+[ext_resource type="Script" path="res://scripts/interactables/grapple_point.gd" id="11_grapple"]
+[ext_resource type="Script" path="res://scripts/world/secret_wall.gd" id="12_wall"]
+[ext_resource type="Script" path="res://scripts/world/floor_spikes.gd" id="13_spikes"]
+[ext_resource type="Script" path="res://scripts/world/poison_mist_area.gd" id="14_mist"]
+[ext_resource type="Script" path="res://scripts/creatures/cave_troll.gd" id="15_troll"]
+
+[node name="CaveDungeon" type="Node2D"]
+
+[node name="CaveVisual" type="Node2D" parent="."]
+script = ExtResource("1_caveroom")
+
+[node name="YSort_Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ExitPortal" parent="YSort_Entities" instance=ExtResource("2_portal")]
+position = Vector2(0, 200)
+target_scene_path = "res://scenes/world.tscn"
+target_portal_id = "cave_entrance_outside"
+portal_tag = "cave_entrance_inside"
+prompt_action_text = "Dışarı Çık"
+interactable_name = "Mağara Çıkışı"
+arrival_offset = Vector2(0, -20)
+
+[node name="EntranceTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(-25, 160)
+color = Color(1, 0.6, 0.2, 1)
+texture_scale = 1.3
+
+[node name="LootCrate1" parent="YSort_Entities" instance=ExtResource("8_crate")]
+position = Vector2(-45, 140)
+
+[node name="LootCrate2" parent="YSort_Entities" instance=ExtResource("8_crate")]
+position = Vector2(45, 140)
+
+[node name="SpikesRoomTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(0, -60)
+color = Color(0.8, 0.4, 0.2, 1)
+texture_scale = 1.4
+
+[node name="SpikeTrap1" type="Node2D" parent="YSort_Entities"]
+position = Vector2(-16, 20)
+script = ExtResource("13_spikes")
+trap_id = "dungeon_spikes_01"
+
+[node name="SpikeTrap2" type="Node2D" parent="YSort_Entities"]
+position = Vector2(16, -20)
+script = ExtResource("13_spikes")
+trap_id = "dungeon_spikes_02"
+
+[node name="PuzzlePlate" type="Node2D" parent="YSort_Entities"]
+position = Vector2(-260, -60)
+script = ExtResource("9_plate")
+plate_id = "dungeon_plate_west"
+target_door_path = NodePath("../PuzzleDoor")
+
+[node name="PuzzleRock" type="CharacterBody2D" parent="YSort_Entities"]
+position = Vector2(-200, -60)
+script = ExtResource("10_rock")
+rock_id = "dungeon_rock_west"
+
+[node name="PuzzleDoor" parent="YSort_Entities" instance=ExtResource("4_door")]
+position = Vector2(-100, -60)
+rotation = 1.5708
+interactable_id = "door_puzzle_chamber"
+required_key_id = ""
+
+[node name="PuzzleTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(-230, -110)
+color = Color(0.4, 0.7, 1, 1)
+texture_scale = 1.4
+
+[node name="MistHazard" type="Area2D" parent="YSort_Entities"]
+position = Vector2(230, -60)
+script = ExtResource("14_mist")
+
+[node name="GrappleHookAnchor" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(270, -60)
+script = ExtResource("11_grapple")
+point_id = "dungeon_grapple_chasm"
+interactable_id = "dungeon_grapple_chasm"
+arrival_offset = Vector2(20, 0)
+
+[node name="ChasmTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(180, -90)
+color = Color(0.2, 0.9, 0.5, 1)
+texture_scale = 1.4
+
+[node name="SecretWall" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(340, -60)
+rotation = 1.5708
+script = ExtResource("12_wall")
+wall_id = "secret_wall_chamber"
+
+[node name="SecretRoomTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(440, -95)
+color = Color(1, 0.8, 0.3, 1)
+texture_scale = 1.5
+
+[node name="SecretTreasureChest" parent="YSort_Entities" instance=ExtResource("6_chest")]
+position = Vector2(465, -60)
+interactable_id = "chest_cave_secret_chamber"
+interactable_name = "Kadim Zindan Sandığı"
+item_reward_name = "Kadim Madalyon & 50x Bakır Sikke & 5x Gölge Yosunu"
+reward_item_ids = ["ancient_medallion", "cooper_coins", "shadow_moss"]
+reward_item_amounts = [1, 50, 5]
+
+[node name="BossDoor" parent="YSort_Entities" instance=ExtResource("4_door")]
+position = Vector2(0, -160)
+interactable_id = "door_boss_arena"
+required_key_id = "dungeon_key"
+key_display_name = "Paslı Zindan Anahtarı"
+
+[node name="DungeonKeyItem" parent="YSort_Entities" instance=ExtResource("7_worlditem")]
+position = Vector2(-260, -90)
+item_id = "dungeon_key"
+amount = 1
+
+[node name="TrollArenaTorch1" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(-70, -320)
+color = Color(1, 0.3, 0.2, 1)
+texture_scale = 1.8
+
+[node name="TrollArenaTorch2" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(70, -320)
+color = Color(1, 0.3, 0.2, 1)
+texture_scale = 1.8
+
+[node name="CaveTrollBoss" type="CharacterBody2D" parent="YSort_Entities"]
+position = Vector2(0, -320)
+script = ExtResource("15_troll")
+boss_door_path = NodePath("../RewardDoor")
+reward_chest_path = NodePath("../RewardChest")
+
+[node name="RewardDoor" parent="YSort_Entities" instance=ExtResource("4_door")]
+position = Vector2(0, -450)
+interactable_id = "door_troll_reward"
+required_key_id = ""
+
+[node name="RewardSanctumTorch" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(0, -560)
+color = Color(0.3, 0.9, 1, 1)
+texture_scale = 2.0
+
+[node name="RewardChest" parent="YSort_Entities" instance=ExtResource("6_chest")]
+position = Vector2(0, -540)
+interactable_id = "chest_dungeon_grappling_hook"
+interactable_name = "Trol Mabedi Hazinesi"
+item_reward_name = "Kanca & 100x Bakır Sikke & 5x Demir Cevheri"
+reward_item_ids = ["grappling_hook", "cooper_coins", "iron_ore"]
+reward_item_amounts = [1, 100, 5]
+
+[node name="Player" parent="YSort_Entities" instance=ExtResource("3_player")]
+position = Vector2(0, 180)

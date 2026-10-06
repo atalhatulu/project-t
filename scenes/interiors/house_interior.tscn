@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3 uid="uid://house_interior_scene"]
+
+[ext_resource type="Script" path="res://scripts/world/interior_room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/props/scene_portal.tscn" id="2_portal"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/props/interior_furniture.tscn" id="4_furn"]
+[ext_resource type="PackedScene" path="res://scenes/props/smart_lantern.tscn" id="5_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/props/chest.tscn" id="6_chest"]
+
+[node name="HouseInterior" type="Node2D"]
+
+[node name="RoomVisual" type="Node2D" parent="."]
+script = ExtResource("1_room")
+room_title = "Köy Evi"
+room_width = 260.0
+room_height = 190.0
+floor_color = Color(0.38, 0.25, 0.14, 1)
+
+[node name="YSort_Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ExitPortal" parent="YSort_Entities" instance=ExtResource("2_portal")]
+position = Vector2(0, 90)
+target_scene_path = "res://scenes/world.tscn"
+target_portal_id = "house_door_outside"
+portal_tag = "house_door_inside"
+prompt_action_text = "Çık"
+interactable_name = "Ev Çıkış Kapısı"
+arrival_offset = Vector2(0, -18)
+
+[node name="Bed" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(-75, -45)
+furniture_type = "bed"
+interaction_message = "Mütevazı ama rahat görünen saman ve kuş tüyü yatak."
+
+[node name="Bookshelf" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(60, -60)
+furniture_type = "bookshelf"
+interaction_message = "Vadinin bitkileri ve eski hanedanlar üzerine birkaç yıpranmış el yazması kitap."
+
+[node name="Table" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(50, 20)
+furniture_type = "table"
+interaction_message = "Üzerinde bir mum ve kuru çiçekler bulunan sade masa."
+
+[node name="Chest_House" parent="YSort_Entities" instance=ExtResource("6_chest")]
+position = Vector2(-80, 30)
+interactable_id = "chest_village_house"
+interactable_name = "Eski Çeyiz Sandığı"
+item_reward_name = "Bakır Sikkeler & Ahşap Sopa"
+reward_item_ids = PackedStringArray("cooper_coins", "wooden_club")
+reward_item_amounts = PackedInt32Array(25, 1)
+
+[node name="Lantern" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(0, -50)
+texture_scale = 1.3
+
+[node name="Player" parent="YSort_Entities" instance=ExtResource("3_player")]
+position = Vector2(0, 70)

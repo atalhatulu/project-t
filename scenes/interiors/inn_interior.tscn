@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://inn_interior_scene"]
+
+[ext_resource type="Script" path="res://scripts/world/interior_room.gd" id="1_room"]
+[ext_resource type="PackedScene" path="res://scenes/props/scene_portal.tscn" id="2_portal"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/props/interior_furniture.tscn" id="4_furn"]
+[ext_resource type="PackedScene" path="res://scenes/props/smart_lantern.tscn" id="5_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/props/chest.tscn" id="6_chest"]
+
+[node name="InnInterior" type="Node2D"]
+
+[node name="RoomVisual" type="Node2D" parent="."]
+script = ExtResource("1_room")
+room_title = "Kızıl Han - Ana Salon"
+room_width = 300.0
+room_height = 200.0
+floor_color = Color(0.36, 0.22, 0.11, 1)
+
+[node name="YSort_Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="ExitPortal" parent="YSort_Entities" instance=ExtResource("2_portal")]
+position = Vector2(0, 95)
+target_scene_path = "res://scenes/world.tscn"
+target_portal_id = "inn_door_outside"
+portal_tag = "inn_door_inside"
+prompt_action_text = "Çık"
+interactable_name = "Han Çıkış Kapısı"
+arrival_offset = Vector2(0, -18)
+
+[node name="Counter" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(-60, -30)
+furniture_type = "counter"
+interaction_message = "Kızıl Han'ın cilalı ahşap tezgahı. Mira'nın taze ekmek ve baharat kokuları yayılıyor."
+
+[node name="Fireplace" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(70, -65)
+furniture_type = "fireplace"
+interaction_message = "Ocakta meşe kütükleri çıtırdayarak yanıyor. Hanın içi sıcacık."
+
+[node name="Table1" parent="YSort_Entities" instance=ExtResource("4_furn")]
+position = Vector2(60, 20)
+furniture_type = "table"
+interaction_message = "Yolcuların yemek yediği ve dinlendiği ahşap masa."
+
+[node name="Chest_Inn" parent="YSort_Entities" instance=ExtResource("6_chest")]
+position = Vector2(-110, -60)
+interactable_id = "chest_inn_pantry"
+interactable_name = "Han Kileri Sandığı"
+item_reward_name = "2x Hancı Ekmeği & Yaban Elması"
+reward_item_ids = PackedStringArray("inn_bread", "wild_apple")
+reward_item_amounts = PackedInt32Array(2, 3)
+
+[node name="Lantern_Fireplace" parent="YSort_Entities" instance=ExtResource("5_lantern")]
+position = Vector2(70, -65)
+color = Color(1, 0.65, 0.3, 1)
+texture_scale = 1.4
+
+[node name="Player" parent="YSort_Entities" instance=ExtResource("3_player")]
+position = Vector2(0, 75)

@@ -6,11 +6,14 @@ extends PointLight2D
 
 @export var max_energy: float = 1.0
 @export var enable_flicker: bool = true
+@export var can_be_extinguished_by_rain: bool = true
 
 var base_energy: float = 0.0
 var flicker_offset: float = 0.0
+var is_extinguished: bool = false
 
 func _ready() -> void:
+	add_to_group("smart_lantern")
 	flicker_offset = randf() * 100.0
 	color = Color("ffba66") # Sıcak sarı-turuncu alev ışığı
 	texture_scale = 1.2
@@ -49,12 +52,20 @@ func _process(delta: float) -> void:
 		else:
 			target_energy = max_energy
 
+	# Yağmurda sönme durumu
+	if is_extinguished:
+		target_energy = 0.0
+
 	base_energy = lerp(base_energy, target_energy, delta * 3.0)
 
-	if enable_flicker and base_energy > 0.05:
+	if enable_flicker and base_energy > 0.05 and not is_extinguished:
 		var noise = sin(Time.get_ticks_msec() * 0.008 + flicker_offset) * 0.08
 		energy = clamp(base_energy + noise, 0.0, 2.0)
 	else:
 		energy = base_energy
 
 	enabled = (energy > 0.01)
+
+func set_extinguished(val: bool) -> void:
+	if can_be_extinguished_by_rain:
+		is_extinguished = val

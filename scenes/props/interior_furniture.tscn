@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://furn01scene"]
+
+[ext_resource type="Script" path="res://scripts/world/props/interior_furniture.gd" id="1_furn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_col"]
+size = Vector2(28, 18)
+
+[node name="InteriorFurniture" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_furn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_col")

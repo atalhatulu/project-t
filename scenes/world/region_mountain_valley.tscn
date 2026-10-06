@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://11fldhkbutlk"]
+
+[ext_resource type="Script" path="res://scripts/world/region.gd" id="1_region"]
+[ext_resource type="PackedScene" path="res://scenes/world/mountain_valley_location.tscn" id="2_mtnloc"]
+
+[node name="Region_MountainValley" type="Node2D"]
+script = ExtResource("1_region")
+region_id = "region_02_mountain_valley"
+region_name = "Dağ Eteği Vadisi"
+region_size = Vector2(1920, 1280)
+
+[node name="MountainValleyLocation" parent="." instance=ExtResource("2_mtnloc")]

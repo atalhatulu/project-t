@@ -44,4 +44,16 @@ func update_lighting() -> void:
 		# 21:00 - 05:00 : Gece
 		target_color = night_color
 
+	# Hava Durumu ve Biyom Tonu ile harmanlama
+	var wm = get_tree().get_first_node_in_group("weather_manager")
+	if wm and "weather_darkness_tint" in wm:
+		target_color = target_color * wm.weather_darkness_tint
+
+	var loc = get_tree().get_first_node_in_group("location")
+	var player = get_tree().get_first_node_in_group("player")
+	if loc and player and loc.has_method("get_biome_at_world_pos"):
+		var biome: BiomeData = loc.get_biome_at_world_pos(player.global_position)
+		if biome:
+			target_color = target_color * biome.ambient_color_tint
+
 	color = target_color

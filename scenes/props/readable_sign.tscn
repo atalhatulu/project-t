@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://sgnprp01"]
+
+[ext_resource type="Script" path="res://scripts/interactables/readable_sign.gd" id="1_sign"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sign"]
+size = Vector2(8, 6)
+
+[node name="ReadableSign" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 1
+collision_mask = 0
+script = ExtResource("1_sign")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_sign")

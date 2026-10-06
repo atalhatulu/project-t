@@ -1,0 +1,134 @@
+[gd_scene format=3 uid="uid://bttsn8de36g8k"]
+
+[ext_resource type="Script" path="res://scripts/world/mountain_valley_location.gd" id="1_loc"]
+[ext_resource type="PackedScene" path="res://scenes/props/building.tscn" id="2_cabin"]
+[ext_resource type="PackedScene" path="res://scenes/props/tree.tscn" id="3_tree"]
+[ext_resource type="PackedScene" path="res://scenes/props/rock.tscn" id="4_rock"]
+[ext_resource type="PackedScene" path="res://scenes/props/chest.tscn" id="5_chest"]
+[ext_resource type="PackedScene" path="res://scenes/props/harvestable_plant.tscn" id="6_plant"]
+[ext_resource type="PackedScene" path="res://scenes/props/readable_sign.tscn" id="7_sign"]
+[ext_resource type="PackedScene" path="res://scenes/creatures/passive_creature.tscn" id="8_passive"]
+[ext_resource type="PackedScene" path="res://scenes/props/climbable_cliff.tscn" id="9_cliff"]
+[ext_resource type="Script" path="res://scripts/interactables/grapple_point.gd" id="10_grapple"]
+[ext_resource type="Script" path="res://scripts/interactables/mineable_rock.gd" id="11_mineable"]
+[ext_resource type="Script" path="res://scripts/interactables/ancient_shrine.gd" id="12_shrine"]
+[ext_resource type="Script" path="res://scripts/effects/ambient_atmosphere.gd" id="13_ambience"]
+
+[node name="MountainValleyLocation" type="Node2D"]
+script = ExtResource("1_loc")
+
+[node name="Ground" type="TileMapLayer" parent="."]
+z_index = 0
+
+[node name="Ground_Details" type="TileMapLayer" parent="."]
+z_index = 1
+
+[node name="Paths" type="TileMapLayer" parent="."]
+z_index = 2
+
+[node name="Water" type="TileMapLayer" parent="."]
+z_index = 3
+
+[node name="YSort_Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+z_index = 4
+
+[node name="HunterCabin" parent="YSort_Entities" instance=ExtResource("2_cabin")]
+position = Vector2(400, 750)
+building_name = "Avcı Kulübesi"
+building_width = 72.0
+building_height = 56.0
+roof_color = Color(0.35, 0.25, 0.15, 1)
+
+[node name="Sign_Mountain" parent="YSort_Entities" instance=ExtResource("7_sign")]
+position = Vector2(320, 780)
+interactable_id = "sign_mountain_valley"
+interactable_name = "Dağ Geçidi Tabelası"
+sign_message = "Kuzey: Sarp Sisli Zirve\nGüney: Kartal Yuvası Vadisi\nBatı: Kızıl Köy Sınırı"
+
+[node name="Chest_Hunter" parent="YSort_Entities" instance=ExtResource("5_chest")]
+position = Vector2(450, 770)
+interactable_id = "chest_hunter_supplies"
+interactable_name = "Avcı Malzeme Sandığı"
+item_reward_name = "2x İyileştirici Merhem & 15x Bakır Sikke"
+reward_item_ids = PackedStringArray("healing_salve", "copper_coins")
+reward_item_amounts = PackedInt32Array(2, 15)
+
+[node name="Plant_Mountain1" parent="YSort_Entities" instance=ExtResource("6_plant")]
+position = Vector2(250, 680)
+interactable_id = "plant_mountain_edelweiss_01"
+plant_name = "Dağ Kardeleni"
+item_id = "mountain_flower"
+
+[node name="Cliff_Mountain" parent="YSort_Entities" instance=ExtResource("9_cliff")]
+position = Vector2(600, 500)
+cliff_height = 42.0
+cliff_width = 80.0
+
+[node name="Rock_Mtn1" parent="YSort_Entities" instance=ExtResource("4_rock")]
+position = Vector2(280, 640)
+rock_size = "large"
+
+[node name="Rock_Mtn2" parent="YSort_Entities" instance=ExtResource("4_rock")]
+position = Vector2(340, 620)
+
+[node name="PineTree1" parent="YSort_Entities" instance=ExtResource("3_tree")]
+position = Vector2(200, 700)
+tree_size = "large"
+
+[node name="PineTree2" parent="YSort_Entities" instance=ExtResource("3_tree")]
+position = Vector2(520, 720)
+tree_size = "medium"
+
+[node name="MountainGoat" parent="YSort_Entities" instance=ExtResource("8_passive")]
+position = Vector2(380, 640)
+species = "deer"
+
+[node name="Grapple_Canyon_West" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(1040, 520)
+script = ExtResource("10_grapple")
+point_id = "grapple_mtn_canyon_w"
+interactable_id = "grapple_mtn_canyon_w"
+prompt_action_text = "Kanyona Kanca At"
+interactable_name = "Kanyon Batı Demiri"
+arrival_offset = Vector2(-15, 0)
+
+[node name="Grapple_Canyon_East" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(1200, 520)
+script = ExtResource("10_grapple")
+point_id = "grapple_mtn_canyon_e"
+interactable_id = "grapple_mtn_canyon_e"
+prompt_action_text = "Karşı Yakaya Kanca At"
+interactable_name = "Kanyon Doğu Kazığı"
+arrival_offset = Vector2(15, 0)
+
+[node name="Chest_Canyon_Peak" parent="YSort_Entities" instance=ExtResource("5_chest")]
+position = Vector2(1240, 500)
+interactable_id = "chest_canyon_hidden_peak"
+interactable_name = "Sarp Dağ Zirvesi Sandığı"
+item_reward_name = "Kadim Madalyon & 90x Bakır Sikke & 6x Demir Cevheri"
+reward_item_ids = ["ancient_medallion", "cooper_coins", "iron_ore"]
+reward_item_amounts = [1, 90, 6]
+
+[node name="OreVein_1" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(240, 620)
+script = ExtResource("11_mineable")
+interactable_id = "ore_vein_mtn_1"
+
+[node name="OreVein_2" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(1260, 540)
+script = ExtResource("11_mineable")
+interactable_id = "ore_vein_mtn_peak"
+
+[node name="AncientShrine_Peak" type="StaticBody2D" parent="YSort_Entities"]
+position = Vector2(1210, 470)
+script = ExtResource("12_shrine")
+interactable_id = "shrine_canyon_peak"
+shrine_name = "Yüce Zirve Sunağı"
+
+[node name="AmbientAtmosphere" type="Node2D" parent="."]
+script = ExtResource("13_ambience")
+mote_count = 45
+base_color = Color(0.98, 0.92, 0.65, 0.8)
+wind_velocity = Vector2(22, 8)
+
